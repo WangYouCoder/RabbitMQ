@@ -54,4 +54,4 @@ public:
 private:
     std::string _dbfile;
     sqlite3 *_handler;
-};
+}; 
