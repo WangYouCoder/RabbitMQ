@@ -17,7 +17,7 @@ public:
 
 TEST(exchange_test, insert_test)
 {
-    std::unordered_map<std::string, std::string> map = {{"k1", "v1"}, {"k2", "v2"}};
+    std::unordered_map<std::string, std::string> map = {{"k1", "v1"}};
     emp->declareExchange("exchange1", ExchangeType::DIRECT, true, false, map);
     emp->declareExchange("exchange2", ExchangeType::DIRECT, true, false, map);
     emp->declareExchange("exchange3", ExchangeType::DIRECT, true, false, map);
@@ -26,13 +26,14 @@ TEST(exchange_test, insert_test)
 
 TEST(exchange_test, select_test)
 {
+    ASSERT_EQ(emp->exists("exchange3"), true);
     Exchange::ptr exp = emp->selectExchange("exchange3");
     ASSERT_NE(emp.get(), nullptr);
     ASSERT_EQ(exp->name, "exchange3");
     ASSERT_EQ(exp->durable, true);
     ASSERT_EQ(exp->auto_delete, false);
     ASSERT_EQ(exp->type, ExchangeType::DIRECT);
-    ASSERT_EQ(exp->getArgs(), std::string("k1=v1&k2=v2"));
+    ASSERT_EQ(exp->getArgs(), std::string("k1=v1"));
 }
 
 

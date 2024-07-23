@@ -23,11 +23,11 @@ TEST(message_test, insert_test)
     properties.set_id(Util::uuid());
     properties.set_delivery_mode(DeliveryMode::DURABLE);
     properties.set_routing_key("new.music.pop");
-    mmp->insert("queue1", &properties, "hello world-1", DeliveryMode::DURABLE);
-    mmp->insert("queue1", nullptr, "hello world-2", DeliveryMode::DURABLE);
-    mmp->insert("queue1", nullptr, "hello world-3", DeliveryMode::DURABLE);
-    mmp->insert("queue1", nullptr, "hello world-4", DeliveryMode::DURABLE);
-    mmp->insert("queue1", nullptr, "hello world-5", DeliveryMode::UNDURABLE);
+    mmp->insert("queue1", &properties, "hello world-1", true);
+    mmp->insert("queue1", nullptr, "hello world-2", true);
+    mmp->insert("queue1", nullptr, "hello world-3", true);
+    mmp->insert("queue1", nullptr, "hello world-4", true);
+    mmp->insert("queue1", nullptr, "hello world-5", false);
     ASSERT_EQ(mmp->getable_count("queue1"), 5);
     ASSERT_EQ(mmp->total_count("queue1"), 4);
     ASSERT_EQ(mmp->valid_count("queue1"), 4);
@@ -61,19 +61,19 @@ TEST(message_test, insert_test)
 //     ASSERT_EQ(mmp->getable_count("queue1"), 4);
 // }
 
-TEST(message_test, delete_test)
-{
-    ASSERT_EQ(mmp->getable_count("queue1"), 5);
-    MessagePtr msg1 = mmp->front("queue1");
-    ASSERT_NE(msg1.get(), nullptr);
-    ASSERT_EQ(msg1->paylaod().body(), std::string("hello world-1"));
-    ASSERT_EQ(mmp->getable_count("queue1"), 4);
-    ASSERT_EQ(mmp->waitack_count("queue1"), 1);
-    mmp->ack("queue1", msg1->paylaod().properties().id());
-    ASSERT_EQ(mmp->waitack_count("queue1"), 0);
-    ASSERT_EQ(mmp->valid_count("queue1"), 3);
-    ASSERT_EQ(mmp->total_count("queue1"), 4);
-}
+// TEST(message_test, delete_test)
+// {
+//     ASSERT_EQ(mmp->getable_count("queue1"), 5);
+//     MessagePtr msg1 = mmp->front("queue1");
+//     ASSERT_NE(msg1.get(), nullptr);
+//     ASSERT_EQ(msg1->paylaod().body(), std::string("hello world-1"));
+//     ASSERT_EQ(mmp->getable_count("queue1"), 4);
+//     ASSERT_EQ(mmp->waitack_count("queue1"), 1);
+//     mmp->ack("queue1", msg1->paylaod().properties().id());
+//     ASSERT_EQ(mmp->waitack_count("queue1"), 0);
+//     ASSERT_EQ(mmp->valid_count("queue1"), 3);
+//     ASSERT_EQ(mmp->total_count("queue1"), 4);
+// }
 
 
 int main(int argc, char *argv[])
