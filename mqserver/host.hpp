@@ -110,6 +110,11 @@ public:
        _mmp->ack(qname, msg_id); 
     }
 
+    QueueMap allQueues()
+    {
+        return _mqmp->getAllQueue();
+    }
+
     void clear()
     {
         _emp->clear();

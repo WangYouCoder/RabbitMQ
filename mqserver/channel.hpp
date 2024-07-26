@@ -129,7 +129,7 @@ public:
         }
         basicResponse(true, req->rid(), req->cid());
     }
-    void basicAckconst (const basicAckRequestPtr &req)
+    void basicAck (const basicAckRequestPtr &req)
     {
         _host->basicAck(req->queue_name(), req->message_id());
         basicResponse(true, req->rid(), req->cid());
@@ -155,6 +155,7 @@ public:
         _cmp->remove(req->consumer_tag(), req->queue_name());
         basicResponse(true, req->rid(), req->cid());
     }
+
 
 private:
     void callback(const std::string &tag, const BasicProperties* bp, const std::string &body)
@@ -227,7 +228,7 @@ class ChannelManeger
 public:
     using ptr = std::shared_ptr<ChannelManeger>;
     ChannelManeger() {}
-    bool openChannel(const std::string id, const VirtualHost::ptr& host, const ConsumerManeger::ptr& cmp, 
+    bool openChannel(const std::string &id, const VirtualHost::ptr& host, const ConsumerManeger::ptr& cmp, 
         const ProtobufCodecPtr& codec, const muduo::net::TcpConnectionPtr& conn, const ThreadPool::ptr &pool)
     {
         std::unique_lock<std::mutex> lock(_mutex);
