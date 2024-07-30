@@ -265,7 +265,7 @@ private:
     Consumer::ptr _consumer;
     std::mutex _mutex;
     std::condition_variable _cv;
-    std::unordered_map<std::string, basicCommonResponsePtr> _basic_resp;
+    std::unordered_map<std::string/*rid*/, basicCommonResponsePtr> _basic_resp;
 };
 
 
