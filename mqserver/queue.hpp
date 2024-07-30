@@ -45,7 +45,8 @@ public:
         {
             result += i->first + "=" + i->second + "&";
         }
-        result.pop_back();
+        if(!result.empty())
+            result.pop_back();
         return result;
     }
 

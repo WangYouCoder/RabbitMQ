@@ -246,6 +246,7 @@ class Server {
         void onConnection(const muduo::net::TcpConnectionPtr &conn) {
             if (conn->connected()) {
                 _connection_manager->newConnection(_virtual_host, _consumer_manager, _codec, conn, _threadpool);
+                printf("broken.hpp: conn: %p\n", conn.get());
             }else {
                 _connection_manager->delConnection(conn);
             }

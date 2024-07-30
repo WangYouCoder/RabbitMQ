@@ -27,7 +27,9 @@ public:
     , qname(queue_name)
     ,auto_ack(ack)
     ,callback(cb)
-    {}
+    {
+        DLOG("new Consumer: %p", this);
+    }
 };
 
 class QueueConsume

@@ -90,7 +90,7 @@ public:
             ELOG("加载有效数据失败\n");
             return result;
         }
-        DLOG("垃圾回收，得到的有效消息数量: %ld", result.size());
+        // DLOG("垃圾回收，得到的有效消息数量: %ld", result.size());
         bool ret;
         // 2. 将有效数据，进行序列化存放到临时文件中
         UtilFile::createFile(_tempfile);
@@ -103,7 +103,7 @@ public:
                 return result;
             }
         }
-        DLOG("垃圾回收后，向临时文件写入数据完毕，临时文件大小: %ld", UtilFile(_tempfile).size());
+        // DLOG("垃圾回收后，向临时文件写入数据完毕，临时文件大小: %ld", UtilFile(_tempfile).size());
         // 3. 修改源文件
         if(UtilFile::removeFile(_datafile) == false)
         {
@@ -389,7 +389,7 @@ public:
                 return;
             }
             qmp = std::make_shared<QueueMessage>(_basedir, qname);
-            DLOG("queue_name: %s", qname.c_str());
+            // DLOG("queue_name: %s", qname.c_str());
             _queue_message.insert(std::make_pair(qname, qmp));
         }
         qmp->recovery();

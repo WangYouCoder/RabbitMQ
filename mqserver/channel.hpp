@@ -45,7 +45,9 @@ public:
         , _codec(codec)
         , _conn(conn)
         , _threadpool(pool)
-    {}
+    {
+        DLOG("new Channel: %p", this);
+    }
     ~Channel()
     {
         if(_consumer.get() != nullptr)
@@ -185,6 +187,7 @@ private:
         if(cp.get() == nullptr)
         {
             ELOG("执行消费任务失败，%s 队列没有消费者", qname.c_str());
+            return;
         }
         // 3. 调用订阅者对应的消息处理函数，实现消息推送
         cp->callback(cp->tag, mp->mutable_paylaod()->mutable_properties(), mp->paylaod().body());

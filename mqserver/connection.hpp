@@ -16,6 +16,7 @@ public:
     void openChannel(const openChannelRequestPtr &req)
     {
         bool ret = _channels->openChannel(req->cid(), _host, _cmp, _codec, _conn, _threadpool);
+        DLOG("信道创建成功");
         if(ret == false)
         {
             return basicResponse(false, req->rid(), req->cid());
