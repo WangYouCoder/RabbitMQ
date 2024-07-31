@@ -145,25 +145,6 @@ public:
         waitResponse(rid);
     }
 
-    void basicPulish(const std::string &ename, BasicProperties *bp, const std::string &body)
-    {
-        std::string rid = Util::uuid();
-        basicPublishRequest req;
-        req.set_rid(rid);
-        req.set_cid(_cid);
-        req.set_exchange_name(ename);
-        req.set_body(body);
-        if(bp)
-        {
-            req.mutable_properties()->set_id(bp->id());
-            req.mutable_properties()->set_delivery_mode(bp->delivery_mode());
-            req.mutable_properties()->set_routing_key(bp->routing_key());
-        }
-        
-        _codec->send(_conn, req);
-        waitResponse(rid);
-    }
-
     void basicAck(const std::string msg_id)
     {
         if(_consumer.get() == nullptr)
@@ -183,6 +164,43 @@ public:
         //_consumer.reset();
     }
 
+    void basicCancel()
+    {
+        if(_consumer.get() == nullptr);
+        {
+            return;
+        }
+        std::string rid = Util::uuid();
+        basicCancelRequest req;
+        req.set_rid(rid);
+        req.set_cid(_cid);
+        req.set_consumer_tag(_consumer->tag);
+        req.set_queue_name(_consumer->qname);
+        _codec->send(_conn, req);
+        waitResponse(rid);
+    }
+
+    // 提供给推送客户端
+    void basicPulish(const std::string &ename, BasicProperties *bp, const std::string &body)
+    {
+        std::string rid = Util::uuid();
+        basicPublishRequest req;
+        req.set_rid(rid);
+        req.set_cid(_cid);
+        req.set_exchange_name(ename);
+        req.set_body(body);
+        if(bp)
+        {
+            req.mutable_properties()->set_id(bp->id());
+            req.mutable_properties()->set_delivery_mode(bp->delivery_mode());
+            req.mutable_properties()->set_routing_key(bp->routing_key());
+        }
+        
+        _codec->send(_conn, req);
+        waitResponse(rid);
+    }
+
+    // 提供给消费客户端的
     bool basicConsume(const std::string &consumer_tag, const std::string &qname, bool auto_ack, ConsumerCallback cb)
     {
         if(_consumer.get() != nullptr)
@@ -207,21 +225,7 @@ public:
         _consumer = std::make_shared<Consumer>(consumer_tag, qname, auto_ack, cb);
         return true;
     }
-    void basicCancel()
-    {
-        if(_consumer.get() == nullptr);
-        {
-            return;
-        }
-        std::string rid = Util::uuid();
-        basicCancelRequest req;
-        req.set_rid(rid);
-        req.set_cid(_cid);
-        req.set_consumer_tag(_consumer->tag);
-        req.set_queue_name(_consumer->qname);
-        _codec->send(_conn, req);
-        waitResponse(rid);
-    }
+
     // 收到响应后，添加到_basic_resp
     void putBasicResponse(const basicCommonResponsePtr &resp)
     {
@@ -235,7 +239,7 @@ public:
     {
         if(_consumer.get() == nullptr);
         {
-            DLOG("消息处理是，未找到订阅者信息");
+            DLOG("消息处理时，未找到订阅者信息");
             return;
         }
         if(_consumer->tag != resp->consumer_tag())
@@ -247,6 +251,9 @@ public:
         _consumer->callback(resp->consumer_tag(), resp->mutable_properties(), resp->body());
     }
 private:
+
+    // 当客户端通过信道向服务端发起请求后，服务端会反过来向客户端发送一个响应，这个响应会被保存到该信道的响应管理的map中
+    // 通过判断该信道是否存在该响应来 确保服务端收到并完成了请求
     basicCommonResponsePtr waitResponse(const std::string &rid)
     {
         std::unique_lock<std::mutex> lock(_mutex);
@@ -265,7 +272,7 @@ private:
     Consumer::ptr _consumer;
     std::mutex _mutex;
     std::condition_variable _cv;
-    std::unordered_map<std::string/*rid*/, basicCommonResponsePtr> _basic_resp;
+    std::unordered_map<std::string/*请求id*/, basicCommonResponsePtr> _basic_resp;
 };
 
 
