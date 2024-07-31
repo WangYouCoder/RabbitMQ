@@ -149,7 +149,7 @@ public:
         auto cb = std::bind(&Channel::callback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 
         // 创建了消费者后，当前的channel就是一个消费者了
-        _consumer = _cmp->create(req->consumer_tag(), req->queue_name(), req->auto_ack(), cb);
+        _consumer = _cmp->create(req->consumer_tag(), req->queue_name(), req->auto_ack(), cb/*向客户端发送响应*/);
         basicResponse(true, req->rid(), req->cid());
     }
     void basicCancel(const basicCancelRequestPtr &req)

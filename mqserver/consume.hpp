@@ -145,7 +145,7 @@ public:
                 ELOG("没有找到队列 %s 的消费者管理句柄", queue_name.c_str());
                 return Consumer::ptr();
             }
-            qconsumer = it->second;
+            qconsumer = it->second; // 管理该队列的所有消费者
         }
         
         return qconsumer->create(ctag, queue_name, ack, cb);
